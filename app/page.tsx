@@ -5,9 +5,9 @@ import { motion } from 'framer-motion';
 import Shaker from '../components/Shaker';
 import Vault from '../components/Vault';
 import Countdown from '../components/Countdown';
-import { Playwrite_IN } from 'next/font/google';
+import { Dancing_Script } from 'next/font/google';
 
-const handwriting = Playwrite_IN({ subsets: ['latin'] });
+const handwriting = Dancing_Script({ subsets: ['latin'] });
 
 export default function Home() {
   const [tab, setTab] = useState('shaker');
