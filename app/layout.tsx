@@ -1,20 +1,21 @@
-import "./globals.css";
+import './globals.css'
+import { GeistSans } from 'geist/font/sans'
 
 export const metadata = {
-  title: "For You",
-  description: "Our special moments",
-};
+  title: 'You and I',
+  description: 'A little space for us',
+}
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
   return (
     <html lang="en">
-      <body className="antialiased">
+      <body className={GeistSans.className + ' bg-white text-black'}>
         {children}
       </body>
     </html>
-  );
+  )
 }
