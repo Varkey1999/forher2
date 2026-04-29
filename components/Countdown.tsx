@@ -1,31 +1,90 @@
-'use client';
-import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
+'use client'
+
+import { useEffect, useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+
+const EVENTS = [
+  {
+    title: 'Next Date',
+    date: '2026-05-01T18:00:00',
+  },
+  {
+    title: 'Anniversary',
+    date: '2026-06-10T00:00:00',
+  },
+  {
+    title: 'Trip Together',
+    date: '2026-07-01T09:00:00',
+  },
+]
 
 export default function Countdown() {
-  const [events, setEvents] = useState<any[]>([]);
+  const [index, setIndex] = useState(0)
+  const [now, setNow] = useState(new Date())
+  const [direction, setDirection] = useState(0)
 
   useEffect(() => {
-    const fetchEvents = async () => {
-      const { data } = await supabase.from('countdown_events').select('*').order('target_date', { ascending: true });
-      if (data) setEvents(data);
-    };
-    fetchEvents();
-  }, []);
+    const interval = setInterval(() => {
+      setNow(new Date())
+    }, 1000)
+
+    return () => clearInterval(interval)
+  }, [])
+
+  const getTime = (date: string) => {
+    const diff = new Date(date).getTime() - now.getTime()
+
+    if (diff <= 0) return 'It’s happening ❤️'
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24)
+    const mins = Math.floor((diff / (1000 * 60)) % 60)
+    const secs = Math.floor((diff / 1000) % 60)
+
+    return `${days}d ${hours}h ${mins}m ${secs}s`
+  }
+
+  const next = () => {
+    setDirection(1)
+    setIndex((prev) => (prev + 1) % EVENTS.length)
+  }
+
+  const prev = () => {
+    setDirection(-1)
+    setIndex((prev) => (prev - 1 + EVENTS.length) % EVENTS.length)
+  }
 
   return (
-    <div className="flex flex-col space-y-6">
-      {events.length === 0 ? <p className="text-center text-rose-300">No events added yet.</p> : events.map((ev, idx) => (
-        <div key={idx} className="relative rounded-2xl overflow-hidden h-48 shadow-lg group">
-          <img src={ev.image_url} alt={ev.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-6">
-            <h3 className="text-white font-bold text-2xl tracking-tight">{ev.title}</h3>
-            <p className="text-rose-200 text-sm mt-1 font-medium tracking-wide">
-              {new Date(ev.target_date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-            </p>
+    <div className="flex items-center justify-center h-full">
+
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={index}
+          initial={{ x: direction * 100, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          exit={{ x: direction * -100, opacity: 0 }}
+          transition={{ duration: 0.4 }}
+          className="bg-white rounded-2xl shadow-lg p-8 text-center w-full max-w-sm"
+        >
+          <h2 className="text-xl mb-4 text-[#990F02]">
+            {EVENTS[index].title}
+          </h2>
+
+          <p className="text-2xl font-bold">
+            {getTime(EVENTS[index].date)}
+          </p>
+
+          <div className="flex justify-between mt-6">
+            <button onClick={prev} className="text-sm text-gray-400">
+              ←
+            </button>
+            <button onClick={next} className="text-sm text-gray-400">
+              →
+            </button>
           </div>
-        </div>
-      ))}
+        </motion.div>
+      </AnimatePresence>
+
     </div>
-  );
+  )
 }
