@@ -1,5 +1,7 @@
 import './globals.css'
-import { GeistSans } from 'geist/font/sans'
+import { Inter } from 'next/font/google'
+
+const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
   title: 'You and I',
@@ -13,7 +15,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={GeistSans.className + ' bg-white text-black'}>
+      <body className={inter.className + ' bg-white text-black'}>
         {children}
       </body>
     </html>
